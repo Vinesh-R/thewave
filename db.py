@@ -3,9 +3,9 @@ import psycopg2.extras
 
 def connect():
   conn = psycopg2.connect(
-    dbname = '',
-    host = 'sqletud.u-pem.fr',
-    password = '',
+    dbname = 'thewave',
+    host = 'localhost',
+    user = "postgres",
     cursor_factory = psycopg2.extras.NamedTupleCursor
   )
   conn.autocommit = True

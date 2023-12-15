@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, Blueprint
+from flask import Flask, render_template, request, redirect, url_for, session
 from passlib.context import CryptContext
 
 import db
@@ -66,3 +66,5 @@ def inscrire_user() :
 
 if __name__ == '__main__':
     app.run(debug=True)
+    cur.close()
+    dbConn.close()
