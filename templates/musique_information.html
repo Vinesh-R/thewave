@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Black Bird</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="../static/css/bars.css">
+
+  <style>
+    tbody tr:hover {
+      background-color: #070914;
+    }
+
+    tbody a {
+      text-decoration: none;
+    }
+  </style>
+
+</head>
+<body>
+
+  
+  <nav class="navbar bg-custom pt-1 pb-1 sticky-top">
+    <div class="container-fluid ps-3">
+      <a class="navbar-brand text-white fs-3" href="accueil.html">
+          <img src="../static/asserts/logo.png" width="75" height="72" class="pb-2">
+          <span style="font-family: Product Sans; font-weight: bold;">The Wave</span>
+      </a>
+
+      <form class="form-inline mx-auto col-4 role="search" style="margin-left:12%;">
+        <div class="input-group">
+          <input class="form-control searc text-white bg-transparent" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn border border-white text-white" type="button" style="background-color: #222329;">
+            <svg style="height:1em;" viewBox="0 0 12 13"><g stroke-width="2" stroke="#ffffff" fill="none"><path d="M11.29 11.71l-4-4"/><circle cx="5" cy="5" r="4"/></g></svg>
+          </button>
+        </div>
+      </form>
+
+      <div class="bg-user me-3 pe-3 rounded-pill">
+        <a class="text-white fs-4" href="accueil.html" style="text-decoration:none">
+          <img src="../static/asserts/man.png" width="50" height="50">
+          <span>Master</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!--Sidebar-->
+  <div class="sidebar">
+    <div class="py-4"></div>
+    <a class="fs-3" href="#home">
+      <img src="../static/asserts/accueil.svg" class="pb-2">
+      <span class="ps-4">Accueil</span>
+    </a>
+
+    <a class="fs-3" href="#home">
+      <img src="../static/asserts/explorer.svg" class="pb-2">
+      <span class="ps-4">Explorer</span>
+    </a>
+
+    <a class="fs-3" href="#home">
+      <img src="../static/asserts/playlist.svg" class="pb-2">
+      <span class="ps-4">Playlist</span>
+    </a>
+
+    <a class="fs-3" href="#home">
+      <img src="../static/asserts/historique.svg" class="pb-2">
+      <span class="ps-3">Historique</span>
+    </a>
+  </div>
+
+  <div class="container">
+    <div class="card col-5 mt-5 mx-auto bg-transparent text-white">
+      <div class="hstack gap-5">
+        <img src="../static/asserts/poster.jpg" class="img-fluid" height="200" width="200">
+        <div class="vstack mt-4">
+          <h2>The Time Road</h2>
+          <p>3:12</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-5"></div>
+
+    <div class="hstack text-center text-white">
+      <div class="border-bottom border-end col-6" style="background-color: #070914;" id="parole-area">Paroles</div>
+      <div class="border-bottom col-6" id="info-area">Information</div>
+    </div>
+
+    <div class="container text-white mt-3">
+      <p id="paroles">
+        Dans tes yeux je vois l'univers,
+        Dans ton sourire le bonheur,
+        Dans ton toucher la passion,
+        Dans ton baiser l'éternité.
+
+        Tu es mon soleil, ma lune,
+        Ma terre et mon ciel,
+        Tu es ma vie, ma raison,
+        Mon amour pour l'éternité. 
+
+        Je t'aime plus que tout au monde,
+        Tu es mon âme sœur,
+        Tu es ma moitié,
+        Tu es mon tout.
+
+        Je serai toujours là pour toi,
+        Dans les bons et les mauvais moments,
+        Je t'aimerai toujours,
+        Jusqu'à la fin des temps.
+      </p>
+
+      <div id="information" style="display: none;">
+        <h2>Popularité</h2>
+        <h5>Nombre de ecoute : 55</h5>
+        <h5>Nombre de partage : 54</h5>
+
+        <div class="pt-5"></div>
+        <h2>Artiste Participé</h2>
+        <table class="table mx-auto text-white">
+          <thead>
+            <tr>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="">Mark</a></td>
+
+            </tr>
+            <tr>
+              <td><a href="">Jacob</a></td>
+            </tr>
+            <tr>
+              <td ><a href="">Larry the Bird</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="pt-5"></div>
+        <h2>Groupe participé</h2>
+        <table class="table mx-auto text-white">
+          <thead>
+            <tr>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="">Mark</a></td>
+
+            </tr>
+            <tr>
+              <td><a href="">Jacob</a></td>
+            </tr>
+            <tr>
+              <td ><a href="">Larry the Bird</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    function showParoles(helem, ev) {
+      const elem = document.getElementById("paroles");
+      elem.style.display = "block";
+      helem.target.style.backgroundColor = "#070914";
+      document.getElementById("information").style.display = "none";
+      document.getElementById("info-area").style.backgroundColor = "";
+    }
+
+    function showInfo(helem, ev) {
+      const elem = document.getElementById("information");
+      elem.style.display = "block";
+      helem.target.style.backgroundColor = "#070914";
+      document.getElementById("paroles").style.display = "none";
+      document.getElementById("parole-area").style.backgroundColor = "";
+    }
+
+    document.getElementById("parole-area").addEventListener("click", showParoles);
+    document.getElementById("info-area").addEventListener("click", showInfo);
+
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
+</html>
+
+
