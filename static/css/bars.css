@@ -1,5 +1,7 @@
 body {
-    background: linear-gradient(to top, #070914, #180718); 
+    background: linear-gradient(to top, #070914, #180718);
+    background-size:cover;
+    background-attachment: fixed;
 }
 
 .bg-custom {
