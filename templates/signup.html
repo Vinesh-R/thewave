@@ -137,7 +137,7 @@
 <body>
     <nav class="navbar navbar-light bg-custom pt-3 pb-3">
         <a class="navbar-brand mx-auto text-white fs-1" href="accueil.html">
-            <img src="../static/logo.webp" width="70" height="70" alt="">
+            <img src="../static//asserts/logo.png" width="70" height="70" alt="">
             <span style="font-family: Product Sans;">
                 The Wave
             </span>
@@ -147,30 +147,41 @@
 
     <div class="form-container">
         <p class="title">S'inscrire</p>
-        <form class="form">
+        <form class="form" method="post", action="/inscrire_user">
             <div class="input-group">
                 <label for="mail">e-mail</label>
-                <input type="text" name="mail" id="username" placeholder="">
+                <input type="email" name="email" id="username" placeholder="" required>
             </div>
             <div class="input-group">
                 <label for="username">pseudonyme</label>
-                <input type="text" name="username" id="username" placeholder="">
+                <input type="text" name="pseudonyme" id="username" placeholder="" required>
             </div>
             <div class="input-group">
                 <label for="password">mot de passe</label>
-                <input type="password" name="password" id="password" placeholder="">
+                <input type="password" name="password" id="password" placeholder="" required>
             </div>
             <br>
-            <button class="sign">S'inscrire</button>
+            <input type="submit" class="sign" value="S'inscrire">
             <div class="social-message">
                 <div class="line"></div>
                 <div class="line"></div>
             </div>
         <br>
         <p class="signup">Deja un compte The Wave?
-            <a rel="noopener noreferrer" href="login.html" class="">Se connecter</a>
+            <a rel="noopener noreferrer" href="/login" class="">Se connecter</a>
         </p>
     </div>
+
+    <script>
+        function showpasswd(elem, ev) {
+            if (elem.target.type !== "text") {
+                elem.target.type = "text";
+            } else {
+                elem.target.type = "password";
+            }
+        }
+        document.getElementById("password").addEventListener("dblclick", showpasswd);
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script></body>

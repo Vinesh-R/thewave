@@ -18,33 +18,32 @@ def acceuille() :
     return render_template("accueil.html")
 
 
-@app.route("/connection")
+@app.route("/login")
 def connection() :
-    return render_template("connection.html")
+    return render_template("login.html")
 
-@app.route("/inscription")
-def connection() :
-    return render_template("inscription.html")
-
-
+@app.route("/signup")
+def inscrire() :
+    return render_template("signup.html")
 
 
 @app.route("/verifie_mdp", methods = ["POST"])
 def check_passwd() :
     pseudonyme = request.form.get("pseudonyme", None)
-    mdp = request.form.get("mdp", None)
+    mdp = request.form.get("password", None)
 
     if pseudonyme == None or mdp == None :
-        return "" # TODO : make redriction to connection page
+        return redirect("/login?error=1")
     
-    cur.execute("SELECT mdp FROM utilisateur WHERE pseudonyme = %s",(pseudonyme,))
+    cur.execute("SELECT motdepasse FROM utilisateur WHERE pseudonyme = %s",(pseudonyme,))
     hashed = cur.fetchall()[0][0]
+    hashed = hashed.strip()
 
     if passwordctx.verify(mdp, hashed) :
         session["pseudonyme"] = pseudonyme
-        return "" # TODO : make redriction to user dashboard
+        return "<h1>Connection sucess</h1>" # TODO : make redriction to user dashboard
     else :
-        return "" # TODO : make redriction to connection page
+        return redirect("/login?error=1")
 
 
 
@@ -52,19 +51,25 @@ def check_passwd() :
 def inscrire_user() :
     pseudonyme = request.form.get("pseudonyme", None)
     email = request.form.get("email", None)
-    mdp = request.form.get("mdp", None)
+    mdp = request.form.get("password", None)
 
     if pseudonyme ==  None or email == None or mdp == None :
-        return ""# TODO : make redriction to inscription page
+        return redirect('/signup')
     
-
     hashed = passwordctx.hash(mdp)
-    cur.execute("INSERT INTO utilisateur (email, pseudonyme, mdp) VALUES (%s, %s, %s)", (email, pseudonyme, hashed))
+    cur.execute("INSERT INTO utilisateur (email, pseudonyme, motdepasse) VALUES (%s, %s, %s)", (email, pseudonyme, hashed))
 
-    return "" # TODO : make redriction to connection page
+    return redirect("/login")
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+
+    try :
+        app.run(debug=True)
+    except :
+        print("error")
+        cur.close()
+        dbConn.close()
+        
     cur.close()
     dbConn.close()
