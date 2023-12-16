@@ -61,6 +61,14 @@ def inscrire_user() :
 
     return redirect("/login")
 
+@app.route("/userdashboard")
+def dashboard() :
+    pseudonyme = request.form.get("pseudonyme", None)
+    if pseudonyme == None :
+        return redirect("/login")
+
+    return ""
+
 
 if __name__ == '__main__':
 
@@ -70,6 +78,6 @@ if __name__ == '__main__':
         print("error")
         cur.close()
         dbConn.close()
-        
+
     cur.close()
     dbConn.close()
