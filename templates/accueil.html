@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        body {
+            height: 100vh;
+            background: linear-gradient(to top, #070914, #271027); 
+            overflow: hidden;
+       }
+
+       .bg-custom {
+        background-color: #070914;
+       }
+
+       .custom-box {
+        border-radius: 5px; /* Optional: Add rounded corners */
+    }
+    input[type=text]:focus {
+        border: 3px solid #ffffff;
+      }
+    
+      .btn-outline-custom {
+        color: rgba(167, 139, 250, 1);
+        border-color: rgba(167, 139, 250, 1);
+      }
+
+      .btn-outline-custom:hover {
+        color: rgba(243, 244, 246, 1);
+        background-color: rgba(167, 139, 250, 1);
+        border-color: rgba(167, 139, 250, 1);
+      }
+
+      .text {
+        position: absolute;
+        min-height: 100vh;
+        width: 50%;
+        font-family: Product Sans, Helvetica, Sans-Serif;
+      }
+
+      .title span {
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        border-right: .15em solid rgba(167, 139, 250, 1);
+        letter-spacing: .1em;
+        animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+    }
+
+                /* The typing effect */
+        @keyframes typing {
+        from { width: 0 }
+        to { width: 512.41px }
+        }
+
+        /* The typewriter cursor effect */
+        @keyframes blink-caret {
+        from, to { border-color: transparent }
+        50% { border-color: rgba(167, 139, 250, 1); }
+        }
+
+    .photos {
+        position: absolute;
+        right: 0;
+        width: 50%;
+        height: 100vh;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @import url('https://fonts.cdnfonts.com/css/google-sans');
+    </style>
+    <link href="https://fonts.cdnfonts.com/css/google-sans" rel="stylesheet">
+
+</head>
+<body>
+    <nav class="navbar navbar-light bg-custom pt-3 pb-3 d-flex justify-content-between">
+        <a class="navbar-brand text-white fs-1 ms-3" href="accueil.html">
+            <img src="../static/logo.webp" width="70" height="70" alt="">
+            <span style="font-family: Product Sans;">
+                The Wave
+            </span>
+        </a>
+        <div class="navbar-nav d-flex flex-row">
+            <a href="login.html">
+            <button type="button" class="btn btn-outline-custom me-3">Se connecter</button>
+            </a>
+            <a href="signup.html">
+            <button type="button" class="btn btn-outline-custom me-3">S'inscrire</button>
+            </a>
+        </div>
+    </nav>
+
+    <div class="text ms-3">
+        <p>
+            <h1 class="text-white ml-2 title"><span>Bienvenue sur The Wave</span></h1>
+        </p>
+        <p>
+            <h2 class="text-white mt-5">Le réseau social des surfeurs</h2>
+        </p>
+        <p class="text-white">
+            Plongez dans un monde de mélodies envoûtantes et d'harmonies captivantes avec The Wave, la nouvelle plateforme de streaming de musique qui va vous faire voyager. <br><br>
+
+            The Wave, c'est plus qu'une simple plateforme de streaming. C'est une expérience immersive conçue pour vous transporter vers de nouveaux horizons sonores. <br><br>
+
+            Avec The Wave, vous pouvez : <br>
+            <ul class="text-white">
+                <li>Découvrir de nouveaux artistes et de nouvelles musiques 🎸🎷🎻 grâce à une sélection rigoureuse de contenus, mise à jour en permanence.</li>
+                <li>Créer vos propres playlists 🎶 pour écouter vos morceaux préférés dans l'ordre que vous souhaitez.</li>
+                <li>Partager vos playlists 🔊 avec vos amis et votre famille.</li>
+            </ul>
+            <p class="text-white">Mais ce qui fait la particularité de The Wave, c'est son approche immersive de la musique.</p>
+            
+            <ul class="text-white">
+                <li>Des visualisations interactives 🌈 vous plongent au cœur de la musique que vous écoutez.</li>
+                <li>Des fonctionnalités exclusives ✨, comme la possibilité de créer vos propres paysages sonores, vous permettent de vivre la musique de manière encore plus intense.</li>
+            </ul>
+            <p class="text-white">
+            The Wave, c'est la plateforme de streaming de musique qui va changer votre façon d'écouter la musique. <br>
+            Inscrivez-vous dès aujourd'hui et commencez votre voyage sonore !
+            </p> <br> 
+
+            <p class="text-white">La team The Wave 🌊</p>
+        </p>
+    </div>
+
+    <div class="photos container ">
+        <div class="row row-cols-2 " >
+            <div class="center"><img class="col img-fluid " src="../static/accueilpic1.jpg" alt=""></div>
+            <div class="center"><img class="col img-fluid " src="../static/accueilpic2.jpg" alt=""></div>
+            <div><img class="col img-fluid" src="../static/accueilpic3.jpg" alt=""></div>
+            <div><img class="col img-fluid" src="../static/accueilpic4.jpg" alt=""></div>
+        </div>
+    </div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script></body>
+</html> 
