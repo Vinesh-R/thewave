@@ -70,7 +70,15 @@ def inscrire_user() :
 
 @app.route("/get_image/<categorie>/<nom>")
 def envoie_image(categorie, nom) :
-    return send_file("./static/asserts/poster.jpg")
+
+    if categorie == "musique" :
+        return send_file("./static/asserts/music.jpg")
+    elif categorie == "artiste" :
+        return send_file("./static/asserts/artist.png")
+    elif categorie == "album" : 
+        return send_file("./static/asserts/album.jpg")
+    elif categorie == "groupe" :
+        return send_file("./static/asserts/groupe.png")
 
 
 @app.route("/userdashboard")
