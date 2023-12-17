@@ -3,7 +3,7 @@ from passlib.context import CryptContext
 import random
 
 import db
-from utils import listmanip
+import utils
 
 
 app = Flask(__name__)
@@ -94,7 +94,7 @@ def dashboard() :
         Musiques = cur.fetchall()
 
     random.shuffle(Musiques)
-    Musiques =listmanip.split_list(Musiques, 4)
+    Musiques =utils.split_list(Musiques, 4)
     
     return render_template("userdashboard.html", musiques = Musiques)
 
@@ -163,6 +163,93 @@ def info_musique(mid) :
                     nbecoute = nbecoutunique, nbpartage = nombrepartage, artistes = artistes, groupes = groupes)
 
 
+@app.route("/recherche")
+def rechercher() :
+    pseudonyme = session.get("pseudonyme", None)
+
+    if pseudonyme == None :
+        return redirect("/login")
+    
+    mot = request.args.get("mot", None)
+    filtre = request.args.get("filtre", None)
+
+    if mot == None :
+        mot = ""
+    else :
+        mot = "%"+mot+"%"
+    
+    if filtre == None or filtre == "morceau" :
+        cur.execute("SELECT musiqueId, titre, photo, duree FROM Morceau WHERE titre LIKE %s", (mot,))
+
+    elif filtre == "artiste" :
+        cur.execute("""SELECT artid, nom ||' '|| prenom, profilepicture FROM artiste 
+                    WHERE nom LIKE %s OR prenom LIKE %s""", (mot, mot))
+    
+    elif filtre == "groupe" :
+        cur.execute("SELECT groupeid, nom, profile FROM groupe WHERE nom LIKE %s", (mot,))
+    
+    elif filtre == "playlist" :
+        cur.execute("SELECT playid, titre FROM playlist WHERE titre LIKE %s", (mot,))
+    
+    elif filtre == "album" :
+        cur.execute("SELECT albumid, titre, photo FROM album WHERE titre LIKE %s", (mot,))
+
+    result = cur.fetchall()
+
+    return render_template("resultat.html", result=result, f = filtre)
+
+
+@app.route("/album/<int:alid>")
+def album(alid) :
+    
+    cur.execute("""SELECT album.titre, groupe.nom, groupe.groupeid description, dateparu 
+                FROM album 
+                NATURAL JOIN creeralbum 
+                NATURAL JOIN groupe WHERE album.albumid = %s;""", (alid,))
+    
+    infos = cur.fetchall()[0]
+    
+    cur.execute("""SELECT musiqueid, titre, duree 
+                FROM morceau 
+                NATURAL JOIN creeralbum WHERE albumid = %s""", (alid,))
+    
+    musique = cur.fetchall()
+
+    return render_template("album.html", infos = infos, musique = musique)
+
+
+@app.route("/info_groupe/<int:gid>")
+def info_groupe(gid) :
+    cur.execute("""SELECT * FROM groupe WHERE groupeid = %s""", (gid,))
+    infos = cur.fetchall()[0]
+    genre = str(infos[4]).replace("[","").replace("]","").replace("'","")
+
+    cur.execute("""SELECT artid, nom||' '||prenom, datearrive 
+                FROM artiste 
+                NATURAL JOIN jouelerole 
+                NATURAL JOIN periode 
+                WHERE groupeid = %s AND datedepart IS NULL;""", (gid,))
+    artiste = cur.fetchall()
+
+    cur.execute("""SELECT albumid, titre 
+                    FROM album 
+                    natural join creeralbum WHERE groupeid = %s;""", (gid,))
+    album = cur.fetchall()
+
+    cur.execute("""SELECT musiqueid, titre 
+                        FROM morceau 
+                        natural join joue WHERE groupeid = %s;""", (gid,))
+    musique = cur.fetchall()
+
+    cur.execute("""SELECT nom||' '||prenom, datearrive , datedepart
+            FROM artiste 
+            NATURAL JOIN jouelerole 
+            NATURAL JOIN periode 
+            WHERE groupeid = %s AND datedepart IS NOT NULL;""", (gid,))
+    historique = cur.fetchall()
+    
+    return render_template("groupe_profile.html", infos=infos, artiste=artiste, album=album, 
+                           musique=musique, historique=historique, genre=genre)
     
 
 if __name__ == '__main__':

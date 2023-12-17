@@ -29,10 +29,10 @@
           <span style="font-family: Product Sans; font-weight: bold;">The Wave</span>
       </a>
 
-      <form class="form-inline mx-auto col-4 role="search" style="margin-left:12%;">
+      <form class="form-inline mx-auto col-4 role="search" style="margin-left:12%;" method="get" action="/recherche">
         <div class="input-group">
-          <input class="form-control searc text-white bg-transparent" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn border border-white text-white" type="button" style="background-color: #222329;">
+          <input class="form-control searc text-white bg-transparent" name="mot" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn border border-white text-white" type="submit" style="background-color: #222329;">
             <svg style="height:1em;" viewBox="0 0 12 13"><g stroke-width="2" stroke="#ffffff" fill="none"><path d="M11.29 11.71l-4-4"/><circle cx="5" cy="5" r="4"/></g></svg>
           </button>
         </div>
@@ -74,9 +74,9 @@
   <div class="container text-white">
     <div class="card col-5 mt-5 mx-auto bg-transparent text-white">
       <div class="hstack gap-5">
-        <img src="../static/asserts/poster.jpg" class="img-fluid rounded-circle" height="200" width="200">
+        <img src="/get_image/groupe/{{infos[5]}}" class="img-fluid rounded-circle" height="200" width="200">
         <div class="vstack mt-4 gap-3">
-          <h2>Nom du Groupe</h2>
+          <h2>{{infos[1]}}</h2>
           <button class="btn bg-transparent text-white border-white col-4">Suivre</button>
           <p>Nombre de suivi : 45</p>
         </div>
@@ -87,9 +87,9 @@
 
     <div class="vstack gap-3">
       <h2>Informations : </h2>
-      <h4 class="ms-4">Datde de creation : 17/02/2003</h4>
-      <h4 class="ms-4">Nationalité : Francais</h4>
-      <h4 class="ms-4">Genre : classic</h4>
+      <h4 class="ms-4">Datde de creation : {{infos[2]}}</h4>
+      <h4 class="ms-4">Nationalité : {{infos[3]}}</h4>
+      <h4 class="ms-4">Genre : {{genre}}</h4>
 
     </div>
 
@@ -100,27 +100,17 @@
     <table class="table mx-auto text-white">
       <thead>
         <tr>
-          <th scope="col"></th>
-          <th scope="col">Titre</th>
+          <th scope="col">Nom</th>
           <th scope="col">Date d'arrivéé</th>
         </tr><a></a>
       </thead>
       <tbody>
-        <tr>
-          <th>1</th>
-          <td><a href="">Mark</a></td>
-          <td>09/02/2004</td>
-        </tr>
-        <tr>
-          <th>2</th>
-          <td><a href="">Jacob</a></td>
-          <td>09/02/2004</td>
-        </tr>
-        <tr>
-          <th>3</th>
-          <td ><a href="">Larry the Bird</a></td>
-          <td>09/02/2004</td>
-        </tr>
+        {% for a in artiste%}
+          <tr>
+            <td><a href="/artiste/{{a[0]}}">{{a[1]}}</a></td>
+            <td>{{a[2]}}</td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
 
@@ -131,24 +121,15 @@
     <table class="table mx-auto text-white">
       <thead>
         <tr>
-          <th scope="col"></th>
           <th scope="col">Titre</th>
         </tr><a></a>
       </thead>
       <tbody>
-        <tr>
-          <th>1</th>
-          <td><a href="">Album 1</a></td>
-        </tr>
-        <tr>
-          <th>2</th>
-          <td><a href="">Album 2</a></td>
-        </tr>
-        <tr>
-          <th>3</th>
-          <td ><a href="">Album 3</a></td>
-        </tr>
-      </tbody>
+        {% for a in album%}
+          <tr>
+            <td><a href="/album/{{a[0]}}">{{a[1]}}</a></td>
+          </tr>
+        {% endfor %}
     </table>
 
     <div class="p-3"></div>
@@ -158,23 +139,15 @@
     <table class="table mx-auto text-white">
       <thead>
         <tr>
-          <th scope="col"></th>
           <th scope="col">Titre</th>
         </tr><a></a>
       </thead>
       <tbody>
-        <tr>
-          <th>1</th>
-          <td><a href="">Morceaux 1</a></td>
-        </tr>
-        <tr>
-          <th>2</th>
-          <td><a href="">Morceaux 2</a></td>
-        </tr>
-        <tr>
-          <th>3</th>
-          <td ><a href="">Morceaux 3</a></td>
-        </tr>
+        {% for m in musique %}
+          <tr>
+            <td><a href="/morceau/{{m[0]}}">{{m[1]}}</a></td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
 
@@ -185,31 +158,19 @@
     <table class="table mx-auto text-white">
       <thead>
         <tr>
-          <th scope="col"></th>
           <th scope="col">Titre</th>
           <th scope="col">Date d'arrivéé</th>
           <th scope="col">Date de sortie</th>
         </tr><a></a>
       </thead>
       <tbody>
-        <tr>
-          <th>1</th>
-          <td><a href="">Mark</a></td>
-          <td>09/02/2004</td>
-          <td>09/02/2004</td>
-        </tr>
-        <tr>
-          <th>2</th>
-          <td><a href="">Jacob</a></td>
-          <td>09/02/2004</td>
-          <td>09/02/2004</td>
-        </tr>
-        <tr>
-          <th>3</th>
-          <td ><a href="">Larry the Bird</a></td>
-          <td>09/02/2004</td>
-          <td>09/02/2004</td>
-        </tr>
+        {% for h in historique%}
+          <tr>
+            <td>{{h[0]}}</td>
+            <td>{{h[1]}}</td>
+            <td>{{h[2]}}</td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
 
