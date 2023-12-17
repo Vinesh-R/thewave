@@ -74,10 +74,10 @@
   <div class="container">
     <div class="card col-5 mt-5 mx-auto bg-transparent text-white">
       <div class="hstack gap-5">
-        <img src="../static/asserts/poster.jpg" class="img-fluid" height="200" width="200">
+        <img src="/get_image/musique/{{photo}}" class="img-fluid" height="200" width="200">
         <div class="vstack mt-4">
-          <h2>The Time Road</h2>
-          <p>3:12</p>
+          <h2>{{titre}}</h2>
+          <p>{{duree}}</p>
         </div>
       </div>
     </div>
@@ -91,31 +91,13 @@
 
     <div class="container text-white mt-3">
       <p id="paroles">
-        Dans tes yeux je vois l'univers,
-        Dans ton sourire le bonheur,
-        Dans ton toucher la passion,
-        Dans ton baiser l'éternité.
-
-        Tu es mon soleil, ma lune,
-        Ma terre et mon ciel,
-        Tu es ma vie, ma raison,
-        Mon amour pour l'éternité. 
-
-        Je t'aime plus que tout au monde,
-        Tu es mon âme sœur,
-        Tu es ma moitié,
-        Tu es mon tout.
-
-        Je serai toujours là pour toi,
-        Dans les bons et les mauvais moments,
-        Je t'aimerai toujours,
-        Jusqu'à la fin des temps.
+        {{parole}}
       </p>
 
       <div id="information" style="display: none;">
         <h2>Popularité</h2>
-        <h5>Nombre de ecoute : 55</h5>
-        <h5>Nombre de partage : 54</h5>
+        <h5>Nombre de ecoute : {{nbecoute}}</h5>
+        <h5>Nombre de partage : {{nbpartage}}</h5>
 
         <div class="pt-5"></div>
         <h2>Artiste Participé</h2>
@@ -124,17 +106,13 @@
             <tr>
             </tr>
           </thead>
+          
           <tbody>
+            {% for id, nom in artistes %}
             <tr>
-              <td><a href="">Mark</a></td>
-
+              <td><a href="/artiste/{{id}}">{{nom}}</a></td>
             </tr>
-            <tr>
-              <td><a href="">Jacob</a></td>
-            </tr>
-            <tr>
-              <td ><a href="">Larry the Bird</a></td>
-            </tr>
+            {% endfor %}
           </tbody>
         </table>
 
@@ -146,16 +124,11 @@
             </tr>
           </thead>
           <tbody>
+            {% for id, nom in groupes %}
             <tr>
-              <td><a href="">Mark</a></td>
-
+              <td><a href="/info_groupe/{{id}}">{{nom}}</a></td>
             </tr>
-            <tr>
-              <td><a href="">Jacob</a></td>
-            </tr>
-            <tr>
-              <td ><a href="">Larry the Bird</a></td>
-            </tr>
+            {% endfor %}
           </tbody>
         </table>
 

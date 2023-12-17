@@ -43,8 +43,8 @@
 
       <div class="container">
         <div class="d-flex flex-column mt-5 gap-5">
-            <h1 class="text-center text-white">The Travel Road</h1>
-            <img src="../static/asserts/poster.jpg" class="img-thumbnail mx-auto" height="600" width="600">
+            <h1 class="text-center text-white"><a href="/information_morceau/{{ id }}" style="text-decoration: none;">{{ titre }}</a></h1>
+            <img src="/get_image/musique/{{ photo }}" class="img-thumbnail mx-auto" height="600" width="600">
         </div>
     </div>
 
@@ -67,7 +67,7 @@
                 </div>
 
                 <div class="col-6 ms-auto">
-                    <h5 class="text-white text-center mt-2">The Travel Road</h5>
+                    <h5 class="text-white text-center mt-2">{{ titre }}</h5>
                 </div>
 
                 <div class="col text-center">

@@ -78,89 +78,33 @@
     </a>
   </div>
 
+
+
   <div class="container">
 
     <div class="vstack">
+
+    {% for vstack in musiques%}
+    
       <div class="hstack mt-5 justify-content-center gap-5">
-        <a class="card border-white" style="text-decoration: none;">
-          <img src="../static/asserts/poster.jpg" class="card-img-top" height="200" width="200">
+      {% for hstack in vstack%}
+
+        <a class="card border-white" style="text-decoration: none;" href="/morceau/{{ hstack[0] }}">
+          <img src="/get_image/musique/{{ hstack[2] }}" class="card-img-top" height="200" width="200">
           <div class="card-body">
             <h4 class="card-tit">
-              The Time travel
+              {{hstack[1]}}
             </h4>
           </div>
         </a>
-  
-        <a class="card border-white" style="text-decoration: none;">
-          <img src="../static/asserts/poster.jpg" class="card-img-top" height="200" width="200">
-          <div class="card-body">
-            <h4 class="card-tit">
-              The Time travel
-            </h4>
-          </div>
-        </a>
-  
-        <a class="card border-white" style="text-decoration: none;">
-          <img src="../static/asserts/poster.jpg" class="card-img-top" height="200" width="200">
-          <div class="card-body">
-            <h4 class="card-tit">
-              The Time travel
-            </h4>
-          </div>
-        </a>
-  
-        <a class="card border-white" style="text-decoration: none;">
-          <img src="../static/asserts/poster.jpg" class="card-img-top" height="200" width="200">
-          <div class="card-body">
-            <h4 class="card-tit">
-              The Time travel
-            </h4>
-          </div>
-        </a>
+
+      {% endfor %}
       </div>
+
+    {% endfor %}
     </div>
 
-    <div class="vstack">
-      <div class="hstack mt-5 justify-content-center gap-5">
-        <a class="card border-white" style="text-decoration: none;">
-          <img src="../static/asserts/poster.jpg" class="card-img-top rounded-circle" height="200" width="200">
-          <div class="card-body">
-            <h4 class="card-tit">
-              The Time travel
-            </h4>
-          </div>
-        </a>
-  
-        <a class="card border-white" style="text-decoration: none;">
-          <img src="../static/asserts/poster.jpg" class="card-img-top rounded-circle" height="200" width="200">
-          <div class="card-body">
-            <h4 class="card-tit">
-              The Time travel
-            </h4>
-          </div>
-        </a>
-  
-        <a class="card border-white" style="text-decoration: none;">
-          <img src="../static/asserts/poster.jpg" class="card-img-top rounded-circle" height="200" width="200">
-          <div class="card-body">
-            <h4 class="card-tit">
-              The Time travel
-            </h4>
-          </div>
-        </a>
-  
-        <a class="card border-white" style="text-decoration: none;">
-          <img src="../static/asserts/poster.jpg" class="card-img-top rounded-circle" height="200" width="200">
-          <div class="card-body">
-            <h4 class="card-tit">
-              The Time travel
-            </h4>
-          </div>
-        </a>
-      </div>
-    </div>
   </div>
-
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </body>
