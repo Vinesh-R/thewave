@@ -209,6 +209,11 @@ def rechercher() :
 
 @app.route("/album/<int:alid>")
 def album(alid) :
+
+    pseudonyme = session.get("pseudonyme", None)
+
+    if pseudonyme == None :
+        return redirect("/login")
     
     cur.execute("""SELECT album.titre, groupe.nom, groupe.groupeid description, dateparu 
                 FROM album 
@@ -228,6 +233,12 @@ def album(alid) :
 
 @app.route("/info_groupe/<int:gid>")
 def info_groupe(gid) :
+
+    pseudonyme = session.get("pseudonyme", None)
+
+    if pseudonyme == None :
+        return redirect("/login")
+
     cur.execute("""SELECT * FROM groupe WHERE groupeid = %s""", (gid,))
     infos = cur.fetchall()[0]
     genre = str(infos[4]).replace("[","").replace("]","").replace("'","")
@@ -258,6 +269,20 @@ def info_groupe(gid) :
     
     return render_template("groupe_profile.html", infos=infos, artiste=artiste, album=album, 
                            musique=musique, historique=historique, genre=genre)
+
+@app.route("/suivre_groupe/<int:gid>")
+def suivre_groupe(gid) :
+    pseudonyme = session.get("pseudonyme", None)
+
+    if pseudonyme == None :
+        return "Failed"
+
+    cur.execute("INSERT INTO suivregroupe VALUES (%s, %s) ON CONFLICT DO NOTHING", (pseudonyme, gid))
+
+    return "Sucess"
+
+    
+        
     
 
 if __name__ == '__main__':

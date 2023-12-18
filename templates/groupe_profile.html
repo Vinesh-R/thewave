@@ -50,22 +50,22 @@
   <!--Sidebar-->
   <div class="sidebar">
     <div class="py-4"></div>
-    <a class="fs-3" href="#home">
+    <a class="fs-3" href="/userdashboard">
       <img src="../static/asserts/accueil.svg" class="pb-2">
       <span class="ps-4">Accueil</span>
     </a>
 
-    <a class="fs-3" href="#home">
+    <a class="fs-3" href="/explorer">
       <img src="../static/asserts/explorer.svg" class="pb-2">
       <span class="ps-4">Explorer</span>
     </a>
 
-    <a class="fs-3" href="#home">
+    <a class="fs-3" href="/playlist">
       <img src="../static/asserts/playlist.svg" class="pb-2">
       <span class="ps-4">Playlist</span>
     </a>
 
-    <a class="fs-3" href="#home">
+    <a class="fs-3" href="/historique">
       <img src="../static/asserts/historique.svg" class="pb-2">
       <span class="ps-3">Historique</span>
     </a>
@@ -78,7 +78,7 @@
         <div class="vstack mt-4 gap-3">
           <h2>{{infos[1]}}</h2>
           <input type="hidden" id="groupeid", value="{{infos[0]}}">
-          <button class="btn bg-transparent text-white border-white col-4" onclick="suivreg()">Suivre</button>
+          <button class="btn bg-transparent text-white border-white col-4" id="suivrebtn">Suivre</button>
           <p>Nombre de suivi : 45</p>
         </div>
       </div>
@@ -178,9 +178,21 @@
   </div>
 
   <script>
-    function suivreg() {
+    async function suivreg() {
       gid = document.getElementById("groupeid").value;
+      const url = "/suivre_groupe/" + gid;
+      const response = await fetch(url, {credentials: "same-origin"});
+      const res = await response.text();
+
+      if(res == "Sucess") {
+        let newcname = document.getElementById("suivrebun").className.replace("white", "sucess");
+        document.getElementById("suivrebun").className = newcname;
+      }
     }
+
+    document.getElementById("suivrebtn").onclick = async() => {
+      await suivreg();
+    };
   </script>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
