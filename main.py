@@ -281,8 +281,38 @@ def suivre_groupe(gid) :
 
     return "Sucess"
 
+@app.route("/verifie_mdp_new", methods = ["POST"])
+def check_passwd_new() :
+    mdp = request.form.get("password", None)
+    user = session.get("pseudonyme", None)
+
+    cur.execute("SELECT motdepasse FROM utilisateur WHERE pseudonyme = %s",(user,))
+    hashed = cur.fetchall()[0][0]
+    hashed = hashed.strip()
+
+    if passwordctx.verify(mdp, hashed) :
+        newmdp = request.form.get("new_password", None)
+        newname = request.form.get("pseudonyme", None)
+        newmail = request.form.get("email", None)
+        hashed = passwordctx.hash(newmdp)
+        cur.execute("UPDATE utilisateur SET motdepasse = %s, pseudonyme = %s, email = %s WHERE pseudonyme = %s", (hashed, newname, newmail, user))
+        session["pseudonyme"] = newname
+        return redirect("/userdashboard")
+    else :
+        return redirect("/profileutilisateur?error=1")
+
     
-        
+@app.route("/userprofile")
+def profil() :
+    pseudonyme = session.get("pseudonyme", None)
+    if pseudonyme == None :
+        return redirect("/login")
+    
+    cur.execute("SELECT pseudonyme, email, profilepicture, dateinscription FROM Utilisateur WHERE pseudonyme = %s", (pseudonyme,))
+    infos = cur.fetchall()[0]
+
+    return render_template("profileutilisateur.html", pseudonyme = infos[0], email = infos[1], pfp = infos[2], date = infos[3])
+
     
 
 if __name__ == '__main__':
