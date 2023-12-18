@@ -223,7 +223,7 @@ def album(alid) :
     infos = cur.fetchall()[0]
     
     cur.execute("""SELECT musiqueid, titre, duree 
-                FROM morceau 
+                FROM morceau /accueil
                 NATURAL JOIN creeralbum WHERE albumid = %s""", (alid,))
     
     musique = cur.fetchall()
