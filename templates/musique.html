@@ -34,7 +34,7 @@
 
             <div class="row align-items-center">
                 <div class="col ms-5">
-                    <svg width="31" height="30" viewBox="0 0 31 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="31" height="30" viewBox="0 0 31 30" fill="none" xmlns="http://www.w3.org/2000/svg" data-open-modal>
                         <g clip-path="url(#clip0_9_22)">
                         <path d="M18.0835 12.5H2.5835V15H18.0835V12.5ZM18.0835 7.5H2.5835V10H18.0835V7.5ZM23.2502 17.5V12.5H20.6668V17.5H15.5002V20H20.6668V25H23.2502V20H28.4168V17.5H23.2502ZM2.5835 20H12.9168V17.5H2.5835V20Z" fill="white"/>
                         </g>
@@ -43,7 +43,7 @@
                         <rect width="31" height="30" fill="white"/>
                         </clipPath>
                         </defs>
-                        </svg>
+                    </svg>
                 </div>
 
                 <div class="col-6 ms-auto">
@@ -51,16 +51,7 @@
                 </div>
 
                 <div class="col text-center">
-                    <svg class ="ms-4" width="29" height="27" viewBox="0 0 29 27" fill="" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_9_18)">
-                        <path d="M14.5002 4.5V1.125L9.66683 5.625L14.5002 10.125V6.75C18.4997 6.75 21.7502 9.77625 21.7502 13.5C21.7502 14.6362 21.4481 15.7163 20.9043 16.65L22.6685 18.2925C23.611 16.9088 24.1668 15.2662 24.1668 13.5C24.1668 8.5275 19.841 4.5 14.5002 4.5ZM14.5002 20.25C10.5006 20.25 7.25016 17.2237 7.25016 13.5C7.25016 12.3638 7.55225 11.2837 8.096 10.35L6.33183 8.7075C5.38933 10.0912 4.8335 11.7338 4.8335 13.5C4.8335 18.4725 9.15933 22.5 14.5002 22.5V25.875L19.3335 21.375L14.5002 16.875V20.25Z" fill="white"/>
-                        </g>
-                        <defs>
-                        <clipPath id="clip0_9_18">
-                        <rect width="29" height="27" fill="white"/>
-                        </clipPath>
-                        </defs>
-                        </svg>
+
                 </div>
             </div>
             <audio controls class="mb-2">
@@ -68,9 +59,57 @@
             </audio>
 
         </div>
+
+        <dialog data-modal>
+
+            {% for play in playlists%}
+                <div>
+                    <label class="form-label">{{ play[1] }}</label>&nbsp;
+                    {% if play[0] in isincluded%}
+                        <input type="checkbox" class="form-check-input" value="{{ play[0] }}" checked>
+                    {% else %}
+                        <input type="checkbox" class="form-check-input" value="{{ play[0] }}">
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button data-close-modal>Enregister</button>
+        </dialog>
     </div>
 
+    <script>
+        const openbtn = document.querySelector("[data-open-modal]");
+        const modal = document.querySelector("[data-modal]");
+        const closebtn = document.querySelector("[data-close-modal]");
 
+        openbtn.addEventListener("click", () => {
+            modal.showModal()
+        })
+
+        closebtn.addEventListener("click", () => {
+            modal.close()
+            const boxes = document.querySelectorAll('input[type="checkbox"]');
+            let data = {};
+
+            if(boxes.length == 0) {
+                return 0;
+            }
+
+            for(let elem of boxes) {
+                data[elem.value] = elem.checked
+            }
+
+            console.log(JSON.stringify(data));
+
+            fetch("/save_playlist/{{ id }}", {
+                method : 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body : JSON.stringify(data)
+            });
+
+
+        })
+    </script>
 
 </body>
 </html>

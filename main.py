@@ -124,9 +124,17 @@ def morceau(mid) :
 
     infos = infos[0]
 
+    cur.execute("SELECT playid, titre FROM playlist NATURAL JOIN creerplaylist WHERE pseudonyme = %s", (pseudonyme,))
+    playlists = cur.fetchall()
+
+    cur.execute("SELECT playid FROM estconstitue WHERE musiqueid = %s", (mid,))
+    isincluded = utils.tuple2list(cur.fetchall())
+
     cur.execute("INSERT INTO Ecoute VALUES (%s, %s) ON CONFLICT DO NOTHING", (pseudonyme, mid)) #ajoute au historique
+
     
-    return render_template("musique.html", titre = infos[1], photo = infos[2], id = infos[0], pseudonyme = pseudonyme)
+    return render_template("musique.html", titre = infos[1], photo = infos[2], id = infos[0], 
+                           pseudonyme = pseudonyme, playlists=playlists, isincluded=isincluded)
 
 
 
@@ -346,6 +354,19 @@ def profil() :
 
     return render_template("profileutilisateur.html",pseudonyme = pseudonyme, email = infos[1], pfp = infos[2], date = infos[3])
 
+
+@app.route("/save_playlist/<int:mid>", methods = ["POST"])
+def save_playlist(mid) :
+
+    data = request.get_json()
+
+    for playid, ischecked in data.items() :
+        if ischecked :
+            cur.execute("INSERT INTO estconstitue VALUES (%s, %s) ON CONFLICT DO NOTHING", (playid, mid))
+        else :
+            cur.execute("DELETE FROM estconstitue WHERE playid = %s AND musiqueid = %s", (playid, mid))
+
+    return ""
 
 @app.route("/deconnecter", methods =["GET"])
 def deconnecter() :
