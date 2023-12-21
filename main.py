@@ -29,6 +29,7 @@ def connection() :
     
     return render_template("login.html")
 
+
 @app.route("/signup")
 def inscrire() :
     return render_template("signup.html")
@@ -104,7 +105,7 @@ def dashboard() :
     random.shuffle(Musiques)
     Musiques =utils.split_list(Musiques, 4)
     
-    return render_template("userdashboard.html", musiques = Musiques)
+    return render_template("userdashboard.html", musiques = Musiques, pseudonyme = pseudonyme)
 
 
 @app.route("/morceau/<int:mid>")
@@ -123,9 +124,17 @@ def morceau(mid) :
 
     infos = infos[0]
 
+    cur.execute("SELECT playid, titre FROM playlist NATURAL JOIN creerplaylist WHERE pseudonyme = %s", (pseudonyme,))
+    playlists = cur.fetchall()
+
+    cur.execute("SELECT playid FROM estconstitue WHERE musiqueid = %s", (mid,))
+    isincluded = utils.tuple2list(cur.fetchall())
+
     cur.execute("INSERT INTO Ecoute VALUES (%s, %s) ON CONFLICT DO NOTHING", (pseudonyme, mid)) #ajoute au historique
+
     
-    return render_template("musique.html", titre = infos[1], photo = infos[2], id = infos[0])
+    return render_template("musique.html", titre = infos[1], photo = infos[2], id = infos[0], 
+                           pseudonyme = pseudonyme, playlists=playlists, isincluded=isincluded)
 
 
 
@@ -168,7 +177,8 @@ def info_musique(mid) :
 
     return render_template("musique_information.html", id=musiqueinfos[0], titre = musiqueinfos[1], 
                     duree = musiqueinfos[2], photo = musiqueinfos[3], parole = musiqueinfos[4],
-                    nbecoute = nbecoutunique, nbpartage = nombrepartage, artistes = artistes, groupes = groupes)
+                    nbecoute = nbecoutunique, nbpartage = nombrepartage, artistes = artistes, groupes = groupes, 
+                    pseudonyme = pseudonyme)
 
 
 @app.route("/recherche")
@@ -204,7 +214,7 @@ def rechercher() :
 
     result = cur.fetchall()
 
-    return render_template("resultat.html", result=result, f = filtre)
+    return render_template("resultat.html", result=result, f = filtre, pseudonyme = pseudonyme)
 
 
 @app.route("/album/<int:alid>")
@@ -223,12 +233,13 @@ def album(alid) :
     infos = cur.fetchall()[0]
     
     cur.execute("""SELECT musiqueid, titre, duree 
-                FROM morceau /accueil
+                FROM morceau
                 NATURAL JOIN creeralbum WHERE albumid = %s""", (alid,))
     
     musique = cur.fetchall()
 
-    return render_template("album.html", infos = infos, musique = musique)
+    return render_template("album.html", infos = infos, musique = musique, pseudonyme = pseudonyme)
+
 
 
 @app.route("/info_groupe/<int:gid>")
@@ -265,21 +276,51 @@ def info_groupe(gid) :
             NATURAL JOIN jouelerole 
             NATURAL JOIN periode 
             WHERE groupeid = %s AND datedepart IS NOT NULL;""", (gid,))
+    
     historique = cur.fetchall()
+
+    cur.execute("SELECT * from suivregroupe WHERE groupeid = %s AND pseudonyme = %s", (gid, pseudonyme))
+    if len(cur.fetchall()) == 0:
+        url = "/suivre_groupe"
+        wrd = "Follow"
+    else :
+        url = "/unfollow_groupe"
+        wrd = "Unfollow"
+
+    cur.execute("SELECT * from suivregroupe WHERE groupeid = %s", (gid,))
+    nbsuivi = len(cur.fetchall())
+
     
     return render_template("groupe_profile.html", infos=infos, artiste=artiste, album=album, 
-                           musique=musique, historique=historique, genre=genre)
+                           musique=musique, historique=historique, genre=genre, 
+                           pseudonyme = pseudonyme, url = url, wrd = wrd, nbsuivi = nbsuivi)
 
-@app.route("/suivre_groupe/<int:gid>")
-def suivre_groupe(gid) :
+
+@app.route("/suivre_groupe", methods = ["POST"])
+def suivre_groupe() :
     pseudonyme = session.get("pseudonyme", None)
+    gid = request.form.get("groupeid", None)
 
     if pseudonyme == None :
-        return "Failed"
+        return redirect(f"/info_groupe/{gid}")
 
     cur.execute("INSERT INTO suivregroupe VALUES (%s, %s) ON CONFLICT DO NOTHING", (pseudonyme, gid))
 
-    return "Sucess"
+    return redirect(f"/info_groupe/{gid}")
+
+
+@app.route("/unfollow_groupe", methods = ["POST"])
+def unfollow_groupe() :
+    pseudonyme = session.get("pseudonyme", None)
+    gid = request.form.get("groupeid", None)
+
+    if pseudonyme == None :
+        return redirect(f"/info_groupe/{gid}")
+
+    cur.execute("DELETE FROM suivregroupe WHERE pseudonyme = %s AND groupeid = %s", (pseudonyme, gid))
+
+    return redirect(f"/info_groupe/{gid}")
+    
 
 @app.route("/verifie_mdp_new", methods = ["POST"])
 def check_passwd_new() :
@@ -311,18 +352,34 @@ def profil() :
     cur.execute("SELECT pseudonyme, email, profilepicture, dateinscription FROM Utilisateur WHERE pseudonyme = %s", (pseudonyme,))
     infos = cur.fetchall()[0]
 
-    return render_template("profileutilisateur.html", pseudonyme = infos[0], email = infos[1], pfp = infos[2], date = infos[3])
+    return render_template("profileutilisateur.html",pseudonyme = pseudonyme, email = infos[1], pfp = infos[2], date = infos[3])
 
-    
+
+@app.route("/save_playlist/<int:mid>", methods = ["POST"])
+def save_playlist(mid) :
+
+    data = request.get_json()
+
+    for playid, ischecked in data.items() :
+        if ischecked :
+            cur.execute("INSERT INTO estconstitue VALUES (%s, %s) ON CONFLICT DO NOTHING", (playid, mid))
+        else :
+            cur.execute("DELETE FROM estconstitue WHERE playid = %s AND musiqueid = %s", (playid, mid))
+
+    return ""
+
+@app.route("/deconnecter", methods =["GET"])
+def deconnecter() :
+    session.clear()
+    return redirect("/login")
 
 if __name__ == '__main__':
 
     try :
         app.run(debug=True)
     except :
-        print("error")
         cur.close()
         dbConn.close()
-
-    cur.close()
-    dbConn.close()
+    finally :
+        cur.close()
+        dbConn.close()
