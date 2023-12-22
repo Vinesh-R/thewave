@@ -10,6 +10,7 @@
   <style>
     .cadre-table-scroll {
         overflow-y: scroll;
+        scrollbar-width: none; /* Firefox */
       }
       .table-scroll thead th {
         position: sticky;
@@ -22,6 +23,43 @@
     }
 
   </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+      var deleteButtons = document.querySelectorAll('.delete-btn');
+      deleteButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+
+          var playlistId = button.getAttribute('data-id');
+    
+
+          if (confirm('Are you sure you want to delete this playlist?')) {
+
+            fetch('/delete_playlist', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ playlistId: playlistId }),
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+
+                  button.closest('tr').remove();
+                } else {
+                  alert('Failed to delete playlist. Please try again.');
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+              });
+          }
+        });
+      });
+    });
+    </script>
 </head>
 <body>
 
@@ -80,7 +118,7 @@
 
   <div class="container text-white">
 
-    <form action="" id="playlist">
+    <form action="/creerplaylist" id="playlist" method="post">
       <div class="mb-3 mt-5 col-5">
         <input type="text" class="form-control fs-1 text-white bg-transparent border-0" id="eFormControlInput1" name = "titre" value="Nouvelle playlist">
       </div>
@@ -110,13 +148,17 @@
     <table class="table-scroll">
       <thead>
         <tr>
-          <th></th> <th>Titre</th> <th>Duree</th> <th>Artiste</th> <th></th>
+          <th></th> <th>Titre</th> <th></th>
         </tr>
       </thead>
       <tbody>
+        {% for playlist in playlists%}
         <tr>
-          <td></td> <td></td> <td></td>
+          <td>{{playlist[0]}}</td> <td>{{playlist[2]}}</td>
+          <a href="/gerer_playlist/{{playlist[0]}}"><td><button class="btn btn-success">Modifier</button></td></a>
+          <td><button class="btn btn-danger delete-btn" data-id="{{playlist[0]}}">Supprimer</button></td>
         </tr>
+        {% endfor %}
         <!-- la suite des données de la table -->
       </tbody>
     </table>

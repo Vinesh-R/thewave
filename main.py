@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, session, send_file
+from flask import Flask, render_template, request, redirect, url_for, session, send_file, jsonify
 from passlib.context import CryptContext
 import random
-
+import psycopg2
 import db
 import utils
 
@@ -372,6 +372,63 @@ def save_playlist(mid) :
 def deconnecter() :
     session.clear()
     return redirect("/login")
+
+@app.route("/playlist")
+def playlistpage() :
+    pseudonyme = session.get("pseudonyme", None)
+    if pseudonyme == None :
+        return redirect("/login")
+
+    cur.execute("SELECT * FROM creerplaylist natural join playlist WHERE pseudonyme = %s", (pseudonyme,))
+    playlists = cur.fetchall()
+    print(playlists)
+    print(playlists)
+    print(playlists)
+    print(playlists)
+    return render_template("creergerer_playlist.html", playlists=playlists)
+
+@app.route('/delete_playlist', methods=['POST'])
+def delete_playlist():
+    try:
+        data = request.get_json()
+        playlist_id = data.get('playlistId')
+
+        cur.execute('DELETE FROM playlist WHERE playid = %s', (playlist_id,))
+
+        return jsonify({'success': True})
+
+    except psycopg2.Error as e:
+        print('Database error:', e)
+        connection.rollback()
+        return jsonify({'success': False, 'error': 'Database error'})
+
+    except Exception as e:
+        print('Error:', e)
+        return jsonify({'success': False, 'error': 'An error occurred'})
+
+@app.route("/creerplaylist", methods = ["POST"])
+def playlist() :
+    pseudonyme = session.get("pseudonyme", None)
+
+    if pseudonyme == None :
+        return redirect("/login")
+    
+    public = request.form.get("estpublique", None)
+    if public == "prive" :
+        public = False
+    else :
+        public = True
+    description = request.form.get("description", None)
+    titre = request.form.get("titre", None)
+    if titre == None or description == None or public == None :
+        return redirect("/userdashboard")
+
+    cur.execute("INSERT INTO playlist(titre,description,estpublique) VALUES (%s, %s,%s)", (titre, description, public,))
+    cur.execute("select playid from playlist where titre = %s", (titre,))
+    playid = cur.fetchall()[0][0]
+    cur.execute("INSERT INTO creerplaylist VALUES(%s, %s)", (pseudonyme, playid,))
+
+    return redirect("/playlist")
 
 if __name__ == '__main__':
 
