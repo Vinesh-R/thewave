@@ -30,11 +30,10 @@
   <div class="container">
     <div class="card col-5 mt-5 mx-auto bg-transparent text-white">
       <div class="hstack gap-5">
-        <img src="/get_image/album/{{ infos[0] }}" class="img-fluid" height="200" width="200">
         <div class="vstack mt-4">
           <h2>{{infos[0]}}</h2>
-          <h5><a href="/info_groupe/{{infos[2]}}" style="text-decoration: none;">{{infos[1]}}</a></h5>
-          <p>{{infos[3]}}</p>
+          <h5><a href="/otheruser/{{user}}" style="text-decoration: none;">{{user}}</a></h5>
+          <p>Description : {{infos[1]}}</p>
         </div>
       </div>
     </div>
@@ -45,14 +44,12 @@
       <thead>
         <tr>
           <th scope="col">Titre</th>
-          <th scope="col">Durée</th>
         </tr><a></a>
       </thead>
       <tbody>
         {% for m in musique%}
           <tr>
             <td><a href="/morceau/{{m[0]}}">{{m[1]}}</a></td>
-            <td>{{m[2]}}</td>
           </tr>
         {% endfor %}
       </tbody>

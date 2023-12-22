@@ -50,11 +50,15 @@
     <div class="row">
       <div class="col-md-12 mt-3">
         <h1>Historique</h1>
+        <form action="/efface_historique" method="post">
+          <input type="submit" value="Effacer" class="btn bg-transparent text-white border-white">
+        </form>
         {% for musique in musiques %}
           <div class="card mb-3">
             <div class="card-body">
               <div class="card-details">
-                <img src="/static/asserts/{{ musique['photo'] }}" class="card-img-top" alt="{{ musique['titre'] }}">
+                <!--/static/asserts/{{ musique['photo'] }}-->
+                <img src="/get_image/musique/5" class="card-img-top" alt="{{ musique['titre'] }}">
                 <h4>{{ musique['titre'] }}</h4>
               </div>
               <p class="card-text">Length: {{ musique['duree'] | format_duration }}</p>

@@ -87,6 +87,8 @@ def envoie_image(categorie, nom) :
         return send_file("./static/asserts/album.jpg")
     elif categorie == "groupe" :
         return send_file("./static/asserts/groupe.png")
+    elif categorie == "playlist" :
+        return send_file("./static/asserts/playlist_poster.jpg")
 
 
 @app.route("/userdashboard")
@@ -232,7 +234,7 @@ def album(alid) :
     if pseudonyme == None :
         return redirect("/login")
     
-    cur.execute("""SELECT album.titre, groupe.nom, groupe.groupeid description, dateparu 
+    cur.execute("""SELECT album.titre, groupe.nom, groupe.groupeid description, dateparu, album.albumid
                 FROM album 
                 NATURAL JOIN creeralbum 
                 NATURAL JOIN groupe WHERE album.albumid = %s;""", (alid,))
@@ -342,12 +344,16 @@ def check_passwd_new() :
         newmdp = request.form.get("new_password", None)
         newname = request.form.get("pseudonyme", None)
         newmail = request.form.get("email", None)
-        hashed = passwordctx.hash(newmdp)
-        cur.execute("UPDATE utilisateur SET motdepasse = %s, pseudonyme = %s, email = %s WHERE pseudonyme = %s", (hashed, newname, newmail, user))
+        if newmdp == "" or newmdp == None:
+            cur.execute("UPDATE utilisateur SET pseudonyme = %s, email = %s WHERE pseudonyme = %s", (newname, newmail, user))
+        else :
+            hashed = passwordctx.hash(newmdp)
+            cur.execute("UPDATE utilisateur SET motdepasse = %s, pseudonyme = %s, email = %s WHERE pseudonyme = %s", (hashed, newname, newmail, user))
+    
         session["pseudonyme"] = newname
-        return redirect("/userdashboard")
+        return redirect("/userprofile")
     else :
-        return redirect("/profileutilisateur?error=1")
+        return redirect("/userprofile")
 
     
 @app.route("/userprofile")
@@ -380,6 +386,7 @@ def deconnecter() :
     session.clear()
     return redirect("/login")
 
+
 @app.route("/playlist")
 def playlistpage() :
     pseudonyme = session.get("pseudonyme", None)
@@ -389,6 +396,7 @@ def playlistpage() :
     cur.execute("SELECT * FROM creerplaylist natural join playlist WHERE pseudonyme = %s", (pseudonyme,))
     playlists = cur.fetchall()
     return render_template("creergerer_playlist.html", playlists=playlists, pseudonyme=pseudonyme)
+
 
 @app.route('/delete_playlist', methods=['POST'])
 def delete_playlist():
@@ -409,6 +417,7 @@ def delete_playlist():
         print('Error:', e)
         return jsonify({'success': False, 'error': 'An error occurred'})
 
+
 @app.route("/creerplaylist", methods = ["POST"])
 def playlist() :
     pseudonyme = session.get("pseudonyme", None)
@@ -417,10 +426,12 @@ def playlist() :
         return redirect("/login")
     
     public = request.form.get("estpublique", None)
+
     if public == "prive" :
         public = False
     else :
         public = True
+
     description = request.form.get("description", None)
     titre = request.form.get("titre", None)
     if titre == None or description == None or public == None :
@@ -433,6 +444,7 @@ def playlist() :
 
     return redirect("/playlist")
 
+
 @app.route("/gerer_playlist/<int:playid>")
 def gerer_playlist(playid) :
     pseudonyme = session.get("pseudonyme", None)
@@ -440,10 +452,97 @@ def gerer_playlist(playid) :
         return redirect("/login")
 
     cur.execute("SELECT * FROM playlist WHERE playid = %s", (playid,))
+
     playlist = cur.fetchall()[0]
+
     cur.execute("SELECT musiqueid, titre FROM estconstitue NATURAL JOIN morceau WHERE playid = %s", (playid,))
     musiques = cur.fetchall()
-    return render_template("gerer_playlist.html", playlist=playlist, musiques=musiques, pseudonyme=pseudonyme)
+
+    return render_template("gerer_playlist.html", infos=playlist, musiques=musiques, pseudonyme=pseudonyme)
+
+
+@app.route("/modifier_playlist", methods = ["POST"])
+def modifier_playlist() :
+    playid = request.form.get("playid", None)
+    titre = request.form.get("titre", None)
+    estpublique = request.form.get("estpublique", None)
+    desp = request.form.get("description", None)
+
+    pseudonyme = session.get("pseudonyme", None)
+
+    if pseudonyme == None :
+        return redirect("/login")
+
+    #verification si la playlist appartient au user
+    cur.execute("SELECT playid FROM creerplaylist WHERE playid = %s AND pseudonyme = %s", (playid, pseudonyme))
+    if len(cur.fetchall()) == 0 :
+        return redirect("/userdashboard")
+
+    if estpublique == "publique" :
+        estpublique = True
+    else :
+        estpublique = False
+
+    cur.execute("UPDATE playlist SET titre=%s, description=%s, estpublique=%s", (titre, desp, estpublique))
+
+    return redirect(f"/gerer_playlist/{playid}")
+
+@app.route("/show_playlist/<int:playid>")
+def show_playlist(playid) :
+    pseudonyme = session.get("pseudonyme", None)
+
+    if pseudonyme == None :
+        return redirect("/login")
+    
+    cur.execute("SELECT titre, description, estpublique FROM playlist WHERE playid = %s", (playid,))
+    infos = cur.fetchall()[0]
+
+    if not infos[2]  :
+        return redirect("/userdashboard")
+
+
+    cur.execute("SELECT pseudonyme FROM utilisateur NATURAL JOIN creerplaylist WHERE playid = %s",(playid,))
+    user = cur.fetchall()[0][0]
+
+
+    cur.execute("SELECT musiqueid, titre FROM morceau NATURAL JOIN estconstitue WHERE playid = %s", (playid,))
+    musique = cur.fetchall()
+
+    return render_template("show_playlist.html", infos=infos, musique=musique, pseudonyme=pseudonyme, user=user)
+
+
+@app.route("/liste_suivi")
+def liste_suivi() :
+    pseudonyme = session.get("pseudonyme", None)
+
+    if pseudonyme == None :
+        return redirect("/login")
+
+    cur.execute("SELECT userp FROM suivreutilisateur WHERE usersuivipar = %s", (pseudonyme, ))
+    users = utils.tuple2list(cur.fetchall())
+
+    cur.execute("SELECT groupeid, nom FROM groupe NATURAL JOIN suivregroupe WHERE pseudonyme = %s", (pseudonyme,))
+    grps = cur.fetchall()
+    print(grps, users)
+
+    return render_template("liste_suivi.html", users = users, groupes = grps)
+
+
+@app.route("/artiste/<int:artid>")
+def info_artiste(artid) :
+    pseudonyme = session.get("pseudonyme", None)
+
+    if pseudonyme == None :
+        return redirect(f"/login")
+
+    cur.execute("SELECT * from artiste WHERE artid=%s", (artid,))
+    infos = cur.fetchall()[0]
+
+    cur.execute("SELECT musiqueid, titre from morceau NATURAL JOIN participe WHERE artid = %s", (artid,))
+    morceaux = cur.fetchall()
+
+    return render_template("artiste_profile.html", infos=infos, musique=morceaux)
+
 
 @app.route("/explorer")
 def explorer() :
@@ -457,6 +556,7 @@ def explorer() :
     musiques =utils.split_list(musiques, 4)
     return render_template("explorer.html", musiques=musiques, pseudonyme=pseudonyme)
 
+
 @app.route("/otheruser/<string:otheruser>")
 def otheruser(otheruser) :
     pseudonyme = session.get("pseudonyme", None)
@@ -466,14 +566,39 @@ def otheruser(otheruser) :
     cur.execute("SELECT pseudonyme, email, dateinscription, profilepicture FROM Utilisateur WHERE pseudonyme = %s", (otheruser,))
     infos = cur.fetchall()[0]
 
-    cur.execute("select titre,count(musiqueid) from creerplaylist natural join playlist left join estconstitue on playlist.playid = estconstitue.playid  where pseudonyme = %s group by titre", (otheruser,))
+    cur.execute("select titre, count(musiqueid) from creerplaylist natural join playlist left join estconstitue on playlist.playid = estconstitue.playid  where pseudonyme = %s AND estpublique = %s group by titre", (otheruser,True))
     playlists = cur.fetchall()
 
-    cur.execute("select count(*) from suivreutilisateur where user1 = %s", (otheruser, ))
-    nbsuivi = cur.fetchall()[0][0]
+    cur.execute("select usersuivipar from suivreutilisateur where userp = %s", (otheruser, ))
+    suivipar = utils.tuple2list(cur.fetchall())
+    nbsuivi = len(suivipar)
+
+    if pseudonyme in suivipar :
+        url = "/unfollow_user"
+        wrd = "Unfollow"
+    else :
+        url = "/follow_user"
+        wrd = "Follow"
 
     cur.execute("select ")
-    return render_template("otheruser_profile.html", infos=infos, playlists=playlists, pseudonyme=pseudonyme, nbsuivi=nbsuivi)
+    return render_template("otheruser_profile.html", infos=infos, playlists=playlists, 
+                           pseudonyme=pseudonyme, nbsuivi=nbsuivi,
+                           url=url, wrd=wrd)
+
+
+@app.route("/follow_user", methods=["POST"])
+def follow_user() :
+    pseudonyme = session.get("pseudonyme", None)
+    otheruser = request.form.get("otheruser", None)
+    cur.execute("INSERT INTO suivreutilisateur VALUES(%s, %s)", (otheruser, pseudonyme))
+    return redirect(f"/otheruser/{otheruser}")
+
+@app.route("/unfollow_user", methods=["POST"])
+def unfollow_user() :
+    pseudonyme = session.get("pseudonyme", None)
+    otheruser = request.form.get("otheruser", None)
+    cur.execute("DELETE FROM suivreutilisateur WHERE userp=%s AND usersuivipar=%s", (otheruser, pseudonyme))
+    return redirect(f"/otheruser/{otheruser}")
 
 @app.route("/historique")
 def historique() :
@@ -484,6 +609,17 @@ def historique() :
     cur.execute("SELECT musiqueid, titre, duree, photo FROM morceau NATURAL JOIN ecoute WHERE pseudonyme = %s", (pseudonyme,))
     musiques = cur.fetchall()
     return render_template("historique.html", musiques=musiques, pseudonyme=pseudonyme)
+
+@app.route("/efface_historique", methods = ["POST"])
+def efface_historique() :
+    pseudonyme = session.get("pseudonyme", None)
+
+    if pseudonyme == None :
+        return redirect("/login")
+    
+    cur.execute("DELETE FROM ecoute WHERE pseudonyme = %s", (pseudonyme, ))
+
+    return redirect("/historique")
 
 if __name__ == '__main__':
 

@@ -39,13 +39,17 @@
     <div class="row userinfo mt-3">
       <div class="col-md-4"> <!-- Adjust the column size as needed -->
         <div class="image">
-          <img src="../static/asserts/pfp.jpg" alt="" height="300">
+          <img src="../static/asserts/pfp.jpg" alt="" height="300" class="rounded rounded-circle">
         </div>
       </div>
       <div class="col-md-8 d-flex align-items-center"> <!-- Adjust the column size as needed -->
         <div>
           <div><span><h1>{{infos[0]}}</h1></span></div>
           <div><span>Inscription: {{infos[2]}}</span></div>
+          <form action="{{ url }}" method="post">
+            <input type="hidden" name="otheruser", value="{{infos[0]}}">
+            <input type="submit" class="btn bg-transparent text-white border-white col-7" value="{{wrd}}">
+          </form>
           <div><span>Suivi: {{nbsuivi}}</span></div>
         </div>
       </div>

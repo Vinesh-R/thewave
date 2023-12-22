@@ -65,20 +65,16 @@
   {{ sidebar() }}
 
   <div class="wrapper container">
-      <div class="pfp">
+      <div class="pfp.jpg">
           <div>
-          <img src="../static/asserts/{{pfp}}" alt="" class="rounded img-fluid pfppic mt-3">
+          <img src="../static/asserts/pfp.jpg" alt="" class="rounded rounded-circle pfppic mt-3">
           </div>
           <span class="text-white" style="margin-left: 46%; ">{{date}}</span>
       </div>
       <div class="suivi mt-3 ms-3 text-white fs-5">
           <div class="mb-2 suiv">
-              <span class="ms-1">Mes suivis</span>
-              <img src="../static/asserts/suivis.png" alt="">
+              <span class="ms-1"><a href="/liste_suivi">Mes suivis</a></span>
           </div>
-          <span  class="">
-            Suivi par : {{suivi}}
-          </span>
       </div>
 
       <form action="/verifie_mdp_new" method="post">
@@ -86,11 +82,11 @@
         <div class="col form-container mt-5 ms-3 me-3">
           <div class="mb-3">
             <label for="username" class="form-label text-white">Pseudonyme</label>
-            <input type="text" class="form-control" id="username" name="pseudonyme" placeholder="pseudonyme" required>
+            <input type="text" class="form-control" id="username" name="pseudonyme" placeholder="pseudonyme" value="{{pseudonyme}}">
           </div>
           <div class="mb-3">
             <label for="email" class="form-label text-white">Email</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="email" required>
+            <input type="email" class="form-control" id="email" name="email" placeholder="email" value="{{email}}">
           </div>
         </div>
         <div class="col me-3">
@@ -100,7 +96,7 @@
           </div>
           <div class="mb-3">
             <label for="new_password" class="form-label text-white">Nouveau mot de passe</label>
-            <input type="password" class="form-control" id="password" name="new_password" placeholder="mot de passe" required>
+            <input type="password" class="form-control" id="password" name="new_password" placeholder="mot de passe">
           </div>
         </div>
       </div>
