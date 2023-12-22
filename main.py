@@ -14,6 +14,13 @@ cur = dbConn.cursor()
 
 passwordctx = CryptContext(schemes=['bcrypt'])
 
+def format_duration(seconds):
+    minutes, seconds = divmod(seconds, 60)
+    return "{:02}:{:02}".format(int(minutes), int(seconds))
+
+
+app.jinja_env.filters['format_duration'] = format_duration
+
 
 @app.route("/")
 def acceuille() :
@@ -464,10 +471,19 @@ def otheruser(otheruser) :
 
     cur.execute("select count(*) from suivreutilisateur where user1 = %s", (otheruser, ))
     nbsuivi = cur.fetchall()[0][0]
-    
+
     cur.execute("select ")
     return render_template("otheruser_profile.html", infos=infos, playlists=playlists, pseudonyme=pseudonyme, nbsuivi=nbsuivi)
 
+@app.route("/historique")
+def historique() :
+    pseudonyme = session.get("pseudonyme", None)
+    if pseudonyme == None :
+        return redirect("/login")
+
+    cur.execute("SELECT musiqueid, titre, duree, photo FROM morceau NATURAL JOIN ecoute WHERE pseudonyme = %s", (pseudonyme,))
+    musiques = cur.fetchall()
+    return render_template("historique.html", musiques=musiques, pseudonyme=pseudonyme)
 
 if __name__ == '__main__':
 
