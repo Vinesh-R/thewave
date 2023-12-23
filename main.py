@@ -401,7 +401,7 @@ def playlistpage() :
 
     cur.execute("SELECT * FROM creerplaylist natural join playlist WHERE pseudonyme = %s", (pseudonyme,))
     playlists = cur.fetchall()
-    return render_template("creergerer_playlist.html", playlists=playlists, pseudonyme=pseudonyme)
+    return render_template("creergerer_playlist.html", playlists=playlists, pseudonyme = pseudonyme)
 
 
 @app.route('/delete_playlist', methods=['POST'])
@@ -531,7 +531,7 @@ def liste_suivi() :
     grps = cur.fetchall()
     print(grps, users)
 
-    return render_template("liste_suivi.html", users = users, groupes = grps)
+    return render_template("liste_suivi.html", users = users, groupes = grps, pseudonyme = pseudonyme)
 
 
 @app.route("/artiste/<int:artid>")
@@ -547,7 +547,7 @@ def info_artiste(artid) :
     cur.execute("SELECT musiqueid, titre from morceau NATURAL JOIN participe WHERE artid = %s", (artid,))
     morceaux = cur.fetchall()
 
-    return render_template("artiste_profile.html", infos=infos, musique=morceaux)
+    return render_template("artiste_profile.html", infos=infos, musique=morceaux, pseudonyme = pseudonyme)
 
 
 @app.route("/explorer")
