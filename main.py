@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_file, jsonify
 from passlib.context import CryptContext
 import random
-import psycopg2
+from psycopg2 import Error
 import db
 import utils
 
@@ -51,7 +51,13 @@ def check_passwd() :
         return redirect("/login?error=1")
     
     cur.execute("SELECT motdepasse FROM utilisateur WHERE pseudonyme = %s",(pseudonyme,))
-    hashed = cur.fetchall()[0][0]
+
+    data = cur.fetchall()
+
+    if len(data) == 0 :
+        return redirect("/login?error=1")
+    
+    hashed = data[0][0]
     hashed = hashed.strip()
 
     if passwordctx.verify(mdp, hashed) :
@@ -102,13 +108,12 @@ def dashboard() :
                 (SELECT MusiqueId FROM Participe WHERE artId IN 
                     (SELECT DISTINCT Participe.artID FROM Ecoute NATURAL JOIN Participe
                     WHERE Ecoute.pseudonyme = %s)
-                ) AS Ms
-                 LIMIT 10""", (pseudonyme,))
+                ) AS Ms""", (pseudonyme,))
     
     Musiques = cur.fetchall()
 
     if len(Musiques) == 0:
-        cur.execute("SELECT musiqueId, titre, photo FROM Morceau LIMIT 10")
+        cur.execute("SELECT musiqueId, titre, photo FROM Morceau")
         Musiques = cur.fetchall()
 
     random.shuffle(Musiques)
@@ -184,8 +189,10 @@ def info_musique(mid) :
     cur.execute("select groupeid, nom FROM groupe NATURAL JOIN joue WHERE musiqueid = %s", (mid, ))
     groupes = cur.fetchall()
 
+    duree = format_duration(musiqueinfos[2])
+
     return render_template("musique_information.html", id=musiqueinfos[0], titre = musiqueinfos[1], 
-                    duree = musiqueinfos[2], photo = musiqueinfos[3], parole = musiqueinfos[4],
+                    duree = duree, photo = musiqueinfos[3], parole = musiqueinfos[4],
                     nbecoute = nbecoutunique, nbpartage = nombrepartage, artistes = artistes, groupes = groupes, 
                     pseudonyme = pseudonyme)
 
@@ -250,7 +257,6 @@ def album(alid) :
     return render_template("album.html", infos = infos, musique = musique, pseudonyme = pseudonyme)
 
 
-
 @app.route("/info_groupe/<int:gid>")
 def info_groupe(gid) :
 
@@ -270,7 +276,7 @@ def info_groupe(gid) :
                 WHERE groupeid = %s AND datedepart IS NULL;""", (gid,))
     artiste = cur.fetchall()
 
-    cur.execute("""SELECT albumid, titre 
+    cur.execute("""SELECT DISTINCT albumid, titre 
                     FROM album 
                     natural join creeralbum WHERE groupeid = %s;""", (gid,))
     album = cur.fetchall()
@@ -408,7 +414,7 @@ def delete_playlist():
 
         return jsonify({'success': True})
 
-    except psycopg2.Error as e:
+    except Error as e:
         print('Database error:', e)
         connection.rollback()
         return jsonify({'success': False, 'error': 'Database error'})
@@ -550,7 +556,7 @@ def explorer() :
     if pseudonyme == None :
         return redirect("/login")
 
-    cur.execute("SELECT musiqueid, titre, photo FROM morceau LIMIT 10")
+    cur.execute("SELECT musiqueid, titre, photo FROM morceau")
     musiques = cur.fetchall()
     random.shuffle(musiques)
     musiques =utils.split_list(musiques, 4)
