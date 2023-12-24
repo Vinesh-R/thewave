@@ -230,6 +230,9 @@ def rechercher() :
     
     elif filtre == "album" :
         cur.execute("SELECT albumid, titre, photo FROM album WHERE LOWER(titre) LIKE LOWER(%s)", (mot,))
+    
+    else :
+        return render_template("resultat.html", result=[], f = "", pseudonyme = pseudonyme)
 
     result = cur.fetchall()
 
@@ -498,6 +501,7 @@ def modifier_playlist() :
     cur.execute("UPDATE playlist SET titre=%s, description=%s, estpublique=%s", (titre, desp, estpublique))
 
     return redirect(f"/gerer_playlist/{playid}")
+
 
 @app.route("/show_playlist/<int:playid>")
 def show_playlist(playid) :
