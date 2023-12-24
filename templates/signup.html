@@ -134,7 +134,7 @@
     <link href="https://fonts.cdnfonts.com/css/google-sans" rel="stylesheet">
 
 </head>
-<body>
+<body onload="showerror()">
     <nav class="navbar navbar-light bg-custom pt-3 pb-3">
         <a class="navbar-brand mx-auto text-white fs-1" href="/">
             <img src="../static//asserts/logo.png" width="70" height="70" alt="">
@@ -173,6 +173,14 @@
     </div>
 
     <script>
+
+        function showerror() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get("error") !== null) {
+                alert("Pseudonyme est déja prise")
+            }
+        }
+
         function showpasswd(elem, ev) {
             if (elem.target.type !== "text") {
                 elem.target.type = "text";

@@ -63,7 +63,7 @@
         <dialog data-modal>
 
             {% for play in playlists%}
-                <div>
+                <div class="border-bottom border-dark mt-3">
                     <label class="form-label">{{ play[1] }}</label>&nbsp;
                     {% if play[0] in isincluded%}
                         <input type="checkbox" class="form-check-input" value="{{ play[0] }}" checked>
@@ -73,7 +73,7 @@
                 </div>
             {% endfor %}
 
-            <button data-close-modal>Enregister</button>
+            <button data-close-modal class="mt-4">Enregister</button>
         </dialog>
     </div>
 

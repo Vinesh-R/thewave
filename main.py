@@ -77,7 +77,10 @@ def inscrire_user() :
         return redirect('/signup')
     
     hashed = passwordctx.hash(mdp)
-    cur.execute("INSERT INTO utilisateur (email, pseudonyme, motdepasse) VALUES (%s, %s, %s)", (email, pseudonyme, hashed))
+    try :
+        cur.execute("INSERT INTO utilisateur (email, pseudonyme, motdepasse) VALUES (%s, %s, %s)", (email, pseudonyme, hashed))
+    except :
+        return redirect("/signup?error=1")
 
     return redirect("/login")
 
@@ -213,20 +216,20 @@ def rechercher() :
         mot = "%"+mot+"%"
     
     if filtre == None or filtre == "morceau" :
-        cur.execute("SELECT musiqueId, titre, photo, duree FROM Morceau WHERE titre LIKE %s", (mot,))
+        cur.execute("SELECT musiqueId, titre, photo, duree FROM Morceau WHERE LOWER(titre) LIKE LOWER(%s)", (mot,))
 
     elif filtre == "artiste" :
         cur.execute("""SELECT artid, nom ||' '|| prenom, profilepicture FROM artiste 
-                    WHERE nom LIKE %s OR prenom LIKE %s""", (mot, mot))
+                    WHERE LOWER(nom) LIKE LOWER(%s) OR LOWER(prenom) LIKE LOWER(%s)""", (mot, mot))
     
     elif filtre == "groupe" :
-        cur.execute("SELECT groupeid, nom, profile FROM groupe WHERE nom LIKE %s", (mot,))
+        cur.execute("SELECT groupeid, nom, profile FROM groupe WHERE LOWER(nom) LIKE LOWER(%s)", (mot,))
     
     elif filtre == "playlist" :
-        cur.execute("SELECT playid, titre FROM playlist WHERE titre LIKE %s", (mot,))
+        cur.execute("SELECT playid, titre FROM playlist WHERE LOWER(titre) LIKE LOWER(%s)", (mot,))
     
     elif filtre == "album" :
-        cur.execute("SELECT albumid, titre, photo FROM album WHERE titre LIKE %s", (mot,))
+        cur.execute("SELECT albumid, titre, photo FROM album WHERE LOWER(titre) LIKE LOWER(%s)", (mot,))
 
     result = cur.fetchall()
 
@@ -350,12 +353,15 @@ def check_passwd_new() :
         newmdp = request.form.get("new_password", None)
         newname = request.form.get("pseudonyme", None)
         newmail = request.form.get("email", None)
-        if newmdp == "" or newmdp == None:
-            cur.execute("UPDATE utilisateur SET pseudonyme = %s, email = %s WHERE pseudonyme = %s", (newname, newmail, user))
-        else :
-            hashed = passwordctx.hash(newmdp)
-            cur.execute("UPDATE utilisateur SET motdepasse = %s, pseudonyme = %s, email = %s WHERE pseudonyme = %s", (hashed, newname, newmail, user))
-    
+        try :
+            if newmdp == "" or newmdp == None:
+                cur.execute("UPDATE utilisateur SET pseudonyme = %s, email = %s WHERE pseudonyme = %s", (newname, newmail, user))
+            else :
+                hashed = passwordctx.hash(newmdp)
+                cur.execute("UPDATE utilisateur SET motdepasse = %s, pseudonyme = %s, email = %s WHERE pseudonyme = %s", (hashed, newname, newmail, user))
+        except :
+            return redirect("/userprofile?error=1")
+        
         session["pseudonyme"] = newname
         return redirect("/userprofile")
     else :

@@ -27,7 +27,7 @@
   {{ navbar(pseudonyme) }}
   {{ sidebar() }}
 
-  <div class="container">
+  <div class="container" style="overflow: hidden;">
     <div class="card col-5 mt-5 mx-auto bg-transparent text-white">
       <div class="hstack gap-5">
         <img src="/get_image/album/{{ infos[0] }}" class="img-fluid" height="200" width="200">
@@ -45,14 +45,12 @@
       <thead>
         <tr>
           <th scope="col">Titre</th>
-          <th scope="col">Durée</th>
         </tr><a></a>
       </thead>
       <tbody>
         {% for m in musique%}
           <tr>
             <td><a href="/morceau/{{m[0]}}">{{m[1]}}</a></td>
-            <td>{{m[2]}}</td>
           </tr>
         {% endfor %}
       </tbody>

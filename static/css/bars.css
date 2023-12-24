@@ -13,13 +13,10 @@ body {
  }
 
 .sidebar {
-  margin: 0;
-  padding: 0;
-  width: 257px;
+  width: 240px;
   background-color: #f1f1f1;
   position:fixed;
   height: 100%;
-  overflow: auto;
   background-color: #070914;
 }
 
