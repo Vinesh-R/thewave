@@ -38,6 +38,45 @@
 
     <div class="vstack">
 
+      {% for vstack in album%}
+    
+      <div class="hstack mt-5 justify-content-center gap-5">
+      {% for hstack in vstack%}
+
+        <a class="card border-white" style="text-decoration: none;" href="/album/{{ hstack[0] }}">
+          <img src="/get_image/album/{{ hstack[2] }}" class="card-img-top" height="200" width="200">
+          <div class="card-body">
+            <h4 class="card-tit">
+              {{hstack[1]}}
+            </h4>
+          </div>
+        </a>
+
+      {% endfor %}
+      </div>
+
+    {% endfor %}
+
+    {% for vstack in playlist%}
+    
+    <div class="hstack mt-5 justify-content-center gap-5">
+    {% for hstack in vstack%}
+
+      <a class="card border-white" style="text-decoration: none;" href="/show_playlist/{{ hstack[0] }}">
+        <img src="/get_image/playlist/{{ hstack[1] }}" class="card-img-top" height="200" width="200">
+        <div class="card-body">
+          <h4 class="card-tit">
+            {{hstack[1]}}
+          </h4>
+        </div>
+      </a>
+
+    {% endfor %}
+    </div>
+
+  {% endfor %}
+
+
     {% for vstack in musiques%}
     
       <div class="hstack mt-5 justify-content-center gap-5">

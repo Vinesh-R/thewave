@@ -552,15 +552,24 @@ def info_artiste(artid) :
 
 @app.route("/explorer")
 def explorer() :
+
     pseudonyme = session.get("pseudonyme", None)
     if pseudonyme == None :
         return redirect("/login")
 
     cur.execute("SELECT musiqueid, titre, photo FROM morceau")
     musiques = cur.fetchall()
+
+    cur.execute("SELECT albumid, titre, photo FROM album")
+    album = utils.split_list(cur.fetchall(), 4)
+
+    cur.execute("SELECT playid, titre FROM playlist WHERE estpublique = %s",(True,))
+    playlist = utils.split_list(cur.fetchall(), 4)
+
     random.shuffle(musiques)
-    musiques =utils.split_list(musiques, 4)
-    return render_template("explorer.html", musiques=musiques, pseudonyme=pseudonyme)
+    musiques = utils.split_list(musiques, 4)
+
+    return render_template("explorer.html", musiques=musiques, album = album, playlist = playlist, pseudonyme=pseudonyme)
 
 
 @app.route("/otheruser/<string:otheruser>")
