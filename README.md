@@ -1,6 +1,6 @@
 # The Wave
 
-C'est un projet informatique L2, qui consiste à fair une une platform de distribution de musique.
+C'est un projet informatique L2, qui consiste à développer une platform de distribution de musique.
 
 ![logo](static/asserts/logo.png)
 
